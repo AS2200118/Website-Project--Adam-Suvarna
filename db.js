@@ -44,10 +44,54 @@ const ReservationTable = `CREATE TABLE IF NOT EXISTS reservation(
     status TEXT,
     FOREIGN KEY (user_ID) REFERENCES users(ID),
     FOREIGN KEY (restaurant_ID) REFERENCES restaurants(ID))`;
-db.run(RestaurantsTable, (err)=> {
+db.run(ReservationTable, (err)=> {
     if (err) {
-        return console.error("Error creating Restaurant Table:", err.message);
+        return console.error("Error creating Reservation Table:", err.message);
         }
-        console.log("Restaurant Table created successfully");
+    console.log("Reservation Table created successfully");
+});
+
+const MenuTable = `CREATE TABLE IF NOT EXISTS menu(
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    restaurant_ID INTEGER,
+    item_name TEXT,
+    description TEXT,
+    price INTEGER,
+    image TEXT,
+    FOREIGN KEY (restaurant_ID) REFERENCES restuarnts(ID))`;
+db.run(MenuTable, (err)=> {
+    if (err) {
+        return console.error("Error creating Menu Table:", err.message);
+    }
+    console.log("Menu Table created successfully");
+});
+
+const ReviewTable = `CREATE TABLE IF NOT EXISTS reviews(
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_ID INTEGER,
+    restaurant_ID INTEGER,
+    rating INTEGER,
+    comment TEXT,
+    reply TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (restaurant_ID) REFERENCES restaurants(ID))`;
+db.run(ReviewTable, (err)=> {
+    if (err) {
+        return console.error("Error creating Review Table:", err.message);
+    }
+    console.log("Review Table created successfully");
+});
+
+const NotifactionTable = `CREATE TABLE IF NOT EXISTS notifactions(
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_ID INTEGER,
+    message TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_ID) REFERENCES users(ID))`;
+db.run(NotifactionTable, (err)=> {
+    if (err) {
+        return console.error("Error creating Notifactions Table:", err.message);
+    }
+    console.log("Notifactions Table created successfully");
 });
 
