@@ -1,6 +1,6 @@
 //Basic handler for the database:
 const sqlite3 = require('sqlite3').verbose();
-const db = newsqlite3.Database('./database.db', (err)=> {
+const db = new sqlite3.Database('./database.db', (err)=> {
     if (err) {
         console.error('There was an error connecting to the Database:', err.message);
     }
@@ -95,3 +95,4 @@ db.run(NotifactionTable, (err)=> {
     console.log("Notifactions Table created successfully");
 });
 
+module.exports = db;
