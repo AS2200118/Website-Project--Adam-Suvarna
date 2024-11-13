@@ -9,90 +9,56 @@ const db = new sqlite3.Database('./database.db', (err)=> {
     }
 });
 
-//Now to create the tables + error handling:
-const RestaurantsTable = `CREATE TABLE IF NOT EXISTS restaurants(
+//Now to create the tables:
+const RestaurantsTable = `CREATE TABLE IF NOT EXISTS RESTAURANTS(
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    location TEXT,
-    cuisine TEXT,
-    availability TEXT,
-    categories TEXT)`;
-db.run(RestaurantsTable, (err)=> {
-    if (err) {
-        return console.error("Error creating Restaurant Table:", err.message);
-    }
-    console.log("Restaurant Table created successfully");
-});
+    NAME TEXT NOT NULL,
+    LOCATION TEXT NOT NULL,
+    AVAILABILITY TEXT NOT NULL,
+    CATEGORIES TEXT NOT NULL)`;
 
-const UsersTable = `CREATE TABLE IF NOT EXISTS users(
+const UsersTable = `CREATE TABLE IF NOT EXISTS USERS(
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    email TEXT)`;
-db.run(UsersTable, (err)=> {
-    if (err) {
-        return console.error("Error creating Users Table:", err.message);
-    }
-    console.log("User Table created successfully");
-});
+    NAME TEXT NOT NULL,
+    PASSWORD TEXT NOT NULL,
+    EMAIL TEXT UNIQUE NOT NULL,
+    IS_ADMIN INT)`;
 
-const ReservationTable = `CREATE TABLE IF NOT EXISTS reservation(
+const ReservationTable = `CREATE TABLE IF NOT EXISTS RESERVATIONS(
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_ID INTEGER,
-    restaurant_ID INTEGER,
-    date TEXT,
-    time TEXT,
-    status TEXT,
-    FOREIGN KEY (user_ID) REFERENCES users(ID),
-    FOREIGN KEY (restaurant_ID) REFERENCES restaurants(ID))`;
-db.run(ReservationTable, (err)=> {
-    if (err) {
-        return console.error("Error creating Reservation Table:", err.message);
-        }
-    console.log("Reservation Table created successfully");
-});
+    USER_ID INT,
+    RESTAURANT_ID INT,
+    DATE TEXT NOT NULL,
+    TIME TEXT NOT NULL,
+    GUESTS INT NOT NULL,
+    STATUS TEXT NOT NULL,
+    FOREIGN KEY (USER_ID) REFERENCES USERS(ID),
+    FOREIGN KEY (RESTAURANT_ID) REFERENCES RESTAURANTS(ID))`;
 
-const MenuTable = `CREATE TABLE IF NOT EXISTS menu(
+const MenuTable = `CREATE TABLE IF NOT EXISTS MENU(
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    restaurant_ID INTEGER,
-    item_name TEXT,
-    description TEXT,
-    price INTEGER,
-    image TEXT,
-    FOREIGN KEY (restaurant_ID) REFERENCES restuarnts(ID))`;
-db.run(MenuTable, (err)=> {
-    if (err) {
-        return console.error("Error creating Menu Table:", err.message);
-    }
-    console.log("Menu Table created successfully");
-});
+    RESTAURANT_ID INT,
+    ITEM_NAME TEXT NOT NULL,
+    DESCRIPTION TEXT NOT NULL,
+    PRICE INT NOT NULL,
+    IMAGE TEXT NOT NULL,
+    FOREIGN KEY (RESTAURANT_ID) REFERENCES RESTAURANTS(ID))`;
 
-const ReviewTable = `CREATE TABLE IF NOT EXISTS reviews(
+const ReviewTable = `CREATE TABLE IF NOT EXISTS REVIEWS(
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_ID INTEGER,
-    restaurant_ID INTEGER,
-    rating INTEGER,
-    comment TEXT,
-    reply TEXT,
-    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (restaurant_ID) REFERENCES restaurants(ID))`;
-db.run(ReviewTable, (err)=> {
-    if (err) {
-        return console.error("Error creating Review Table:", err.message);
-    }
-    console.log("Review Table created successfully");
-});
+    USER_ID INT,
+    RESTAURANT_ID INT,
+    RATING INT,
+    COMMENT TEXT,
+    REPLY TEXT,
+    CREATED_AT TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (RESTAURANT_ID) REFERENCES RESTAURANTS(ID))`;
 
-const NotifactionTable = `CREATE TABLE IF NOT EXISTS notifactions(
+const NotifactionTable = `CREATE TABLE IF NOT EXISTS NOTIFACTIONS(
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_ID INTEGER,
-    message TEXT,
-    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_ID) REFERENCES users(ID))`;
-db.run(NotifactionTable, (err)=> {
-    if (err) {
-        return console.error("Error creating Notifactions Table:", err.message);
-    }
-    console.log("Notifactions Table created successfully");
-});
+    USER_ID INTEGER,
+    MESSAGE TEXT,
+    CREATED_AT TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (USER_ID) REFERENCES USERS(ID))`;
 
-module.exports = db;
+module.exports = {db, RestaurantsTable, UsersTable, ReservationTable, MenuTable, ReviewTable, NotifactionTable};
