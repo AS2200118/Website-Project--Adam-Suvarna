@@ -3,7 +3,7 @@ const express = require('express')
 const db_acc = require('./db.js')
 const db = db_acc.db
 const server = express()
-const port = 888
+const port = 3000
 server.use(express.json())
 
 //Post request for user registration:
@@ -11,19 +11,22 @@ server.post('/user/register', (req,res)=> {
     const name = req.body.name
     const password = req.body.password
     const email = req.body.email
-    const admin = req.body.admin
-    let query = `INSERT INTO USERS(name,password,email,admin) VALUES ('${name}',  '${password}',
-    '${email}', ${admin} )`
+    const admin = parseInt(req.body.admin,10)
+    let query = `INSERT INTO USERS (NAME,EMAIL,PASSWORD,ADMIN) VALUES ('${name}','${password}',
+    '${email}',${admin})`
 
     db.run(query, (err)=> {
         if(err)
+        {
+            console.log(err)
             return res.status(401).send(err)
+        }
         else
         return res.status(200).send('You have successfully registered!')
     })
 })
 
-server.post('user/login', (req,res)=> {
+server.post('/user/login', (req,res)=> {
     const email = req.body.email
     const password = req.body.password
     let query = `SELECT * FROM USERS WHERE EMAIL='${email}' AND PASSWORD='${password}'`
@@ -41,15 +44,15 @@ server.post('user/login', (req,res)=> {
     })
 })
 
-server.get('admin/all-users/:name', (req,res)=> {
-    db.all(`SELECT NAME,EMAIL FROM USERS WHERE NAME='${req.paramas.name}'`, (err,row)=> {
+server.get('/admin/all-users/:name', (req,res)=> {
+    db.get(`SELECT NAME,EMAIL FROM USERS WHERE NAME='${req.params.name}'`, (err,row)=> {
         if(err)
         {
             console.log(err)
             return res.status(401).send(err)
         }
         else if(!row)
-            return res.send(`User with the name "'${req.paramas.name}'" does not exist`)
+            return res.send(`User with the name "'${req.params.name}'" does not exist`)
         else
         return res.status(200).json(row)
     })
@@ -78,7 +81,7 @@ server.listen(port,()=> {
             if(err)
                 console.log("Error creating Review Table" +err)
         });
-        db.run(db_acc.NotifactionTablesTable, (err)=> {
+        db.run(db_acc.NotificationTable, (err)=> {
             if(err)
                 console.log("Error creating Notifaction Table" +err)
         });

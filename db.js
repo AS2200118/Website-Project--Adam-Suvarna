@@ -1,6 +1,6 @@
 //Basic handler for the database:
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./database.db', (err)=> {
+const db = new sqlite3.Database('database.db', (err)=> {
     if (err) {
         console.error('There was an error connecting to the Database:', err.message);
     }
@@ -54,11 +54,11 @@ const ReviewTable = `CREATE TABLE IF NOT EXISTS REVIEWS(
     CREATED_AT TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (RESTAURANT_ID) REFERENCES RESTAURANTS(ID))`;
 
-const NotifactionTable = `CREATE TABLE IF NOT EXISTS NOTIFACTIONS(
+const NotificationTable = `CREATE TABLE IF NOT EXISTS NOTIFICATIONS(
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     USER_ID INTEGER,
     MESSAGE TEXT,
     CREATED_AT TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (USER_ID) REFERENCES USERS(ID))`;
 
-module.exports = {db, RestaurantsTable, UsersTable, ReservationTable, MenuTable, ReviewTable, NotifactionTable};
+module.exports = {db, RestaurantsTable, UsersTable, ReservationTable, MenuTable, ReviewTable, NotificationTable};
