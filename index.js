@@ -26,7 +26,7 @@ server.post('/user/register', (req,res)=> {
     })
 })
 
-server.get('user/login', (req,res)=> {
+server.post('user/login', (req,res)=> {
     const email = req.body.email
     const password = req.body.password
     let query = `SELECT * FROM USERS WHERE EMAIL='${email}' AND PASSWORD='${password}'`
@@ -40,7 +40,7 @@ server.get('user/login', (req,res)=> {
         else if(!row)
             return res.send('User does not exist, please register first.')
         else
-        return res.send(row)
+        return res.status(200).send('Login Successfull!')
     })
 })
 
