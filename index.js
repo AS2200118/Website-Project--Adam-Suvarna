@@ -12,11 +12,8 @@ server.post('/user/register', (req,res)=> {
     const password = req.body.password
     const email = req.body.email
     const admin = req.body.admin
-    let query = `INSERT INTO USERS(name,password,email,admin) VALUES (
-    '${name}',
-    '${password}',
-    '${email}'.
-    ${admin} )`
+    let query = `INSERT INTO USERS(name,password,email,admin) VALUES ('${name}',  '${password}',
+    '${email}', ${admin} )`
 
     db.run(query, (err)=> {
         if(err)
@@ -45,7 +42,7 @@ server.post('user/login', (req,res)=> {
 })
 
 server.get('admin/all-users/:name', (req,res)=> {
-    db.all(`SELECT * FROM USERS WHERE NAME='${req.paramas.name}'`, (err,row)=> {
+    db.all(`SELECT NAME,EMAIL FROM USERS WHERE NAME='${req.paramas.name}'`, (err,row)=> {
         if(err)
         {
             console.log(err)
@@ -55,6 +52,36 @@ server.get('admin/all-users/:name', (req,res)=> {
             return res.send(`User with the name "'${req.paramas.name}'" does not exist`)
         else
         return res.status(200).json(row)
+    })
+})
+
+server.listen(port,()=> {
+    console.log(`Server running at port ${port}`)
+    db.serialize(()=> {
+        db.run(db_acc.RestaurantsTable, (err)=> {
+            if(err)
+                console.log("Error creating Restaurant Table" +err)
+        });
+        db.run(db_acc.UsersTable, (err)=> {
+            if(err)
+                console.log("Error creating User Table" +err)
+        });
+        db.run(db_acc.ReservationTable, (err)=> {
+            if(err)
+                console.log("Error creating Reservation Table" +err)
+        });
+        db.run(db_acc.MenuTable, (err)=> {
+            if(err)
+                console.log("Error creating Menu Table" +err)
+        });
+        db.run(db_acc.ReviewTable, (err)=> {
+            if(err)
+                console.log("Error creating Review Table" +err)
+        });
+        db.run(db_acc.NotifactionTablesTable, (err)=> {
+            if(err)
+                console.log("Error creating Notifaction Table" +err)
+        });
     })
 })
 
