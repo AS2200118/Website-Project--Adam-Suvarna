@@ -44,13 +44,15 @@ server.post('user/login', (req,res)=> {
     })
 })
 
-server.get('admin/all-users', (req,res)=> {
-    db.all(`SELECT * FROM USERS`, (err,row)=> {
+server.get('admin/all-users/:name', (req,res)=> {
+    db.all(`SELECT * FROM USERS WHERE NAME='${req.paramas.name}'`, (err,row)=> {
         if(err)
         {
             console.log(err)
             return res.status(401).send(err)
         }
+        else if(!row)
+            return res.send(`User with the name "'${req.paramas.name}'" does not exist`)
         else
         return res.status(200).json(row)
     })
