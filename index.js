@@ -12,8 +12,8 @@ server.post('/user/register', (req,res)=> {
     const password = req.body.password
     const email = req.body.email
     const admin = parseInt(req.body.admin,10)
-    let query = `INSERT INTO USERS (NAME,EMAIL,PASSWORD,ADMIN) VALUES ('${name}','${password}',
-    '${email}',${admin})`
+    let query = `INSERT INTO USERS (NAME,EMAIL,PASSWORD,ADMIN) VALUES ('${name}','${email}',
+    '${password}',${admin})`
 
     db.run(query, (err)=> {
         if(err)
@@ -44,7 +44,20 @@ server.post('/user/login', (req,res)=> {
     })
 })
 
-server.get('/admin/all-users/:name', (req,res)=> {
+server.get('/admin/all-users', (req,res)=> {
+    db.all('SELECT * FROM USERS', (err,row)=> {
+        if(err)
+        {
+            return res.status(401).send(err)
+        }
+        else if(!row)
+            return res.send('User does not exist, please register first.')
+        else
+        return res.status(200).json(row)
+    })
+})
+
+server.get('/admin/user/:name', (req,res)=> {
     db.get(`SELECT NAME,EMAIL FROM USERS WHERE NAME='${req.params.name}'`, (err,row)=> {
         if(err)
         {
@@ -55,6 +68,21 @@ server.get('/admin/all-users/:name', (req,res)=> {
             return res.send(`User with the name "'${req.params.name}'" does not exist`)
         else
         return res.status(200).json(row)
+    })
+})
+
+server.delete('/admin/delete/user/:ID', (req,res)=> {
+    const userid = parseInt(req.params.ID,10)
+    let query = `DELETE FROM USERS WHERE ID = ${userid}`
+
+    db.run(query, (err)=> {
+        if(err)
+        {
+            console.log(err)
+            return res.status(401).send(err)
+        }
+        else
+        return res.status(200).send(`User with ID ${userid} has been successfully deleted!`)
     })
 })
 
