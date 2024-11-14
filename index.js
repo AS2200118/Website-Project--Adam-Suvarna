@@ -86,6 +86,29 @@ server.delete('/admin/delete/user/:ID', (req,res)=> {
     })
 })
 
+//Post request for Restaurant:
+server.post('/restaurant', (req,res)=> {
+    const name = req.body.name
+    const location = req.body.location
+    const availability = req.body.availability
+    const date = req.body.date
+    const categories = req.body.categories
+    let query = `INSERT INTO RESTAURANTS (NAME,LOCATION,AVAILABILITY,DATE,CATEGORIES) VALUES ('${name}',
+    '${location}','${availability}','${date}','${categories}')`
+
+    db.run(query, (err)=> {
+        if(err)
+        {
+            console.log(err)
+            return res.status(401).send(err)
+        }
+        else
+        return res.status(200).send('You have successfully entered the details required!')
+    })
+})
+
+
+
 server.listen(port,()=> {
     console.log(`Server running at port ${port}`)
     db.serialize(()=> {
