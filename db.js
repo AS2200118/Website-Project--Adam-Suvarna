@@ -53,11 +53,4 @@ const ReviewTable = `CREATE TABLE IF NOT EXISTS REVIEWS(
     CREATED_AT TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (RESTAURANT_ID) REFERENCES RESTAURANTS(ID))`;
 
-const NotificationTable = `CREATE TABLE IF NOT EXISTS NOTIFICATIONS(
-    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    USER_ID INTEGER,
-    MESSAGE TEXT,
-    CREATED_AT TEXT DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (USER_ID) REFERENCES USERS(ID))`;
-
-module.exports = {db, RestaurantsTable, UsersTable, ReservationTable, MenuTable, ReviewTable, NotificationTable};
+module.exports = {db, RestaurantsTable, UsersTable, ReservationTable, MenuTable, ReviewTable};

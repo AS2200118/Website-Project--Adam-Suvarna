@@ -91,7 +91,7 @@ server.delete('/admin/delete/user/:ID', (req,res)=> {
 })
 
 //POST request for Restaurant:
-server.post('/restaurant', (req,res)=> {
+server.post('/admin/restaurant', (req,res)=> {
     const name = req.body.name
     const location = req.body.location
     const availability = req.body.availability
@@ -111,6 +111,30 @@ server.post('/restaurant', (req,res)=> {
     })
 })
 
+//GET request for Restaurant:
+server.get('/restaurant/search', (req,res)=> {
+    let name = req.query.name
+    let categories = req.query.categories
+    let query = `SELECT NAME,CATEGORIES FROM RESTAURANTS WHERE ID>0`
+    if(name)
+        query+=` AND NAME='${name}'`
+     if(categories)
+        query+=` AND CATEGORIES='${categories}'`
+
+    db.all(query, (err,row)=> {
+        if(err)
+        {
+            console.log(err)
+            return res.status(401).send(err)
+        }
+        else if(!row)
+            return res.send(`Restaurant does not exist`)
+        else
+        return res.status(200).json(row)
+    })
+})
+
+//
 
 //Server startup + Table run:
 server.listen(port,()=> {
@@ -135,10 +159,6 @@ server.listen(port,()=> {
         db.run(db_acc.ReviewTable, (err)=> {
             if(err)
                 console.log("Error creating Review Table" +err)
-        });
-        db.run(db_acc.NotificationTable, (err)=> {
-            if(err)
-                console.log("Error creating Notifaction Table" +err)
         });
     })
 })
