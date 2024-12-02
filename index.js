@@ -1,9 +1,11 @@
 //Basic handler for the server with db and express coding:
 const express = require('express')
+const cors = require('cors');
 const db_acc = require('./db.js')
 const db = db_acc.db
 const server = express()
 const port = 3000
+server.use(cors())
 server.use(express.json())
 
 //POST request for user registration:
