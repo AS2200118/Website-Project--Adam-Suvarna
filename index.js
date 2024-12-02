@@ -96,9 +96,10 @@ server.post('/admin/restaurant', (req,res)=> {
     const location = req.body.location
     const availability = req.body.availability
     const date = req.body.date
+    const time = req.body.time
     const categories = req.body.categories
-    let query = `INSERT INTO RESTAURANTS (NAME,LOCATION,AVAILABILITY,DATE,CATEGORIES) VALUES ('${name}',
-    '${location}','${availability}','${date}','${categories}')`
+    let query = `INSERT INTO RESTAURANTS (NAME,LOCATION,AVAILABILITY,DATE,TIME,CATEGORIES) VALUES ('${name}',
+    '${location}','${availability}','${date}','${time}','${categories}')`
 
     db.run(query, (err)=> {
         if(err)
@@ -115,11 +116,20 @@ server.post('/admin/restaurant', (req,res)=> {
 server.get('/restaurant/search', (req,res)=> {
     let name = req.query.name
     let categories = req.query.categories
-    let query = `SELECT NAME,CATEGORIES FROM RESTAURANTS WHERE ID>0`
+    let date = req.query.date
+    let time = req.query.time
+    let availability = req.query.availability
+    let query = `SELECT NAME,CATEGORIES,DATE,TIME,AVAILABILITY FROM RESTAURANTS WHERE ID>0`
     if(name)
         query+=` AND NAME='${name}'`
      if(categories)
         query+=` AND CATEGORIES='${categories}'`
+     if(date)
+        query+=` AND DATE='${date}'`
+     if(time)
+        query+=` AND TIME='${time}'`
+     if(availability)
+        query+=` AND AVAILABILITY='${availability}'`
 
     db.all(query, (err,row)=> {
         if(err)
@@ -134,7 +144,55 @@ server.get('/restaurant/search', (req,res)=> {
     })
 })
 
-//
+//PUT request for reservation
+server.put(`/restaurant/reservation`, (req,res)=> {
+    let name = req.query.name
+    let date = req.query.date
+    let time = req.query.time
+    let query = `SELECT * FROM RESTAURANTS WHERE NAME='${name}' AND DATE='${date}' AND TIME='${time}'`
+    
+    db.get(query, (err,row)=> {
+        if(err)
+        {
+            console.log(err)
+            return res.send(err)
+        }
+        else
+        {
+            let restaurantID= row.ID
+            let userID= parseInt(req.body.userID,10)
+            let guests= req.body.guests
+            let query2= `INSERT INTO RESERVATIONS (USER_ID, RESTAURANT_ID, GUESTS) VALUES (${userID},
+            ${restaurantID}, '${guests}')`
+
+            db.run(query2, (err)=> {
+                if(err)
+                {
+                    console.log(err)
+                    return res.send(err)
+                }
+                else
+                {
+                    let availability= row.availability
+                    availability= 'Booked'
+                    query= `UPDATE RESTAURANTS SET AVAILABILITY='${availability}' WHERE ID=${restaurantID}`
+
+                    db.run(query, (err)=> {
+                        if(err)
+                        {
+                            console.log(err)
+                            res.send(err)
+                        }
+                        else
+                        res.send(`Booking for '${name}' for a table of '${guests}' is Successfull!`)
+                    })
+                }
+            })
+        }
+    })
+})
+
+//GET request to get reservation:
 
 //Server startup + Table run:
 server.listen(port,()=> {
