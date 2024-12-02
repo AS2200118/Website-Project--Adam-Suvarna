@@ -192,7 +192,7 @@ server.put(`/restaurant/reservation`, (req,res)=> {
     })
 })
 
-//GET request to get reservation:
+//
 
 //Server startup + Table run:
 server.listen(port,()=> {
