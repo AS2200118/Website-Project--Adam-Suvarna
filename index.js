@@ -13,12 +13,23 @@ server.use(express.json())
 server.use(cookieParser())
 
 //Generate the Token
-const generateToken = (id,isAdmin) =>{
+const generateToken = (id,isAdmin)=> {
     return jwt.sign((id,isAdmin), secret_key, {expiresIn:'3h'})
 }
 
 //Verify the Token
-const verifyToken
+const verifyToken = (req,res,next)=> {
+    const token = req.cookies.authToken
+    if(!token)
+        return res.status(401).send('Unauthorized')
+    jwt.verify(token, secret_key, (err,details)=> {
+        if(err)
+            return res.status(403).send('Forbidden')
+        req.userDetails = details
+
+        next()
+    })
+}
 
 //POST request for user registration:
 server.post('/user/register', (req,res)=> {
