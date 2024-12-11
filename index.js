@@ -1,12 +1,24 @@
 //Basic handler for the server with db and express coding:
 const express = require('express')
 const cors = require('cors');
+const jwt = require('jsonwebtoken')
 const db_acc = require('./db.js')
 const db = db_acc.db
+const cookieParser = require('cookie-parser');
 const server = express()
 const port = 3000
+const secret_key = 'dnjendidj3ieadamdw48202diwjowosrrrlepoppadamkdiwjdwidadamkdjojo3eadamswdndjiadamdjdjkw'
 server.use(cors())
 server.use(express.json())
+server.use(cookieParser())
+
+//Generate the Token
+const generateToken = (id,isAdmin) =>{
+    return jwt.sign((id,isAdmin), secret_key, {expiresIn:'3h'})
+}
+
+//Verify the Token
+const verifyToken
 
 //POST request for user registration:
 server.post('/user/register', (req,res)=> {
