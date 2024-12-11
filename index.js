@@ -80,7 +80,11 @@ server.post('/user/login', (req,res)=> {
 })
 
 //GET request for all users in the UsersTable:
-server.get('/admin/all-users', (req,res)=> {
+server.get('/admin/all-users', verifyToken, (req,res)=> {
+    console.log(req.userDetails)
+    const isAdmin = req.userDetails.isAdmin;
+    if(isAdmin!==1)
+        return res.status(403).send("Forbidden")
     db.all('SELECT * FROM USERS', (err,row)=> {
         if(err)
         {
@@ -94,7 +98,11 @@ server.get('/admin/all-users', (req,res)=> {
 })
 
 //GET request using route params for a specific user's Name and Email:
-server.get('/admin/user/:name', (req,res)=> {
+server.get('/admin/user/:name', verifyToken, (req,res)=> {
+    console.log(req.userDetails)
+    const isAdmin = req.userDetails.isAdmin;
+    if(isAdmin!==1)
+        return res.status(403).send("Forbidden")
     db.get(`SELECT NAME,EMAIL FROM USERS WHERE NAME='${req.params.name}'`, (err,row)=> {
         if(err)
         {
@@ -109,7 +117,11 @@ server.get('/admin/user/:name', (req,res)=> {
 })
 
 //DELETE request for deleting a user by their unique ID:
-server.delete('/admin/delete/user/:ID', (req,res)=> {
+server.delete('/admin/delete/user/:ID', verifyToken, (req,res)=> {
+    console.log(req.userDetails)
+    const isAdmin = req.userDetails.isAdmin;
+    if(isAdmin!==1)
+        return res.status(403).send("Forbidden")
     const userid = parseInt(req.params.ID,10)
     let query = `DELETE FROM USERS WHERE ID = ${userid}`
 
@@ -125,7 +137,11 @@ server.delete('/admin/delete/user/:ID', (req,res)=> {
 })
 
 //POST request for Restaurant:
-server.post('/admin/restaurant', (req,res)=> {
+server.post('/admin/restaurant', verifyToken, (req,res)=> {
+    console.log(req.userDetails)
+    const isAdmin = req.userDetails.isAdmin;
+    if(isAdmin!==1)
+        return res.status(403).send("Forbidden")
     const name = req.body.name
     const location = req.body.location
     const availability = req.body.availability
