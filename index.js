@@ -268,6 +268,38 @@ server.post('/admin/additem', verifyToken, (req,res)=> {
 })
 
 //Put request to add item to restaurant:
+server.put('/restaurant/additem', (req,err)=> {
+    let name = req.query.name
+    let category = req.query.category
+    let query = `SELECT * FROM ITEM WHERE NAME='${name}' AND CATEGORY='${category}'`
+
+    db.get(query, (err,row)=> {
+        if(err)
+        {
+            console.log(err)
+            return res.send(err)
+        }
+        else
+        {
+            let itemID= row.ID
+            let restaurantID= parseInt(req.body.restaurantID,10)
+            let query2= `INSERT INTO MENU (ITEM_ID, RESTAURANT_ID) VALUES (${itemID},
+            ${restaurantID})`
+
+            db.run(query2, (err)=> {
+                if(err)
+                {
+                    console.log(err)
+                    return res.send(err)
+                }
+                else
+                {
+                    res.send(`Item: '${item} added for Restaurant: '${restaurantID}' is Successfull!`)
+                }
+            })
+        }
+    })
+})
 
 
 //Server startup + Table run:
