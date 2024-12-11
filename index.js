@@ -66,7 +66,16 @@ server.post('/user/login', (req,res)=> {
         else if(!row)
             return res.send('User does not exist, please register first.')
         else
+        {
+            let userID = row.ID
+            let isAdmin = row.ISADMIN
+            const token = generateToken(userID,isAdmin)
+            res.cookie('authToken', token,{
+                sameSite:'strict',
+                expiresIn:'3h'
+            })
         return res.status(200).send('Login Successfull!')
+        }
     })
 })
 
