@@ -302,8 +302,29 @@ server.put('/restaurant/additem', (req,err)=> {
 })
 
 //DELETE request to delete an item from menu
+server.delete('/admin/delete/item/:ID', verifyToken, (req,res)=> {
+    console.log(req.userDetails)
+    const isAdmin = req.userDetails.isAdmin;
+    if(isAdmin!==1)
+        return res.status(403).send("Forbidden")
+    const restaurantID = parseInt(req.params.restaurantID,10)
+    const itemID = parseInt(req.params.itemID,10)
+    let query = `DELETE FROM MENU WHERE RESTAURANT_ID = ${restaurantID} AND ITEM_ID = ${itemID}`
+
+    db.run(query, (err)=> {
+        if(err)
+        {
+            console.log(err)
+            return res.status(401).send(err)
+        }
+        else
+        return res.status(200).send(`Item with ID ${itemID} from Restaurant ID: ${restaurantID} 
+    has been successfully deleted!`)
+    })
+})
 
 //POST Request for adding review
+
 
 //GET request to get the reviews
 
