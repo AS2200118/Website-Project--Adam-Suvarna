@@ -301,6 +301,15 @@ server.put('/restaurant/additem', (req,err)=> {
     })
 })
 
+//DELETE request to delete an item from menu
+
+//POST Request for adding review
+
+//GET request to get the reviews
+
+//PUT request for admin replying to review
+
+//DELETE request for deleting review
 
 //Server startup + Table run:
 server.listen(port,()=> {
