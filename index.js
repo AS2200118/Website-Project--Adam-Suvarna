@@ -242,7 +242,33 @@ server.put(`/restaurant/reservation`, (req,res)=> {
     })
 })
 
-//
+//POST request to add item:
+server.post('/admin/additem', verifyToken, (req,res)=> {
+    console.log(req.userDetails)
+    const isAdmin = req.userDetails.isAdmin;
+    if(isAdmin!==1)
+        return res.status(403).send("Forbidden")
+    const name = req.body.name
+    const description = req.body.description
+    const price = req.body.price
+    const image = req.body.image
+    const category = req.body.category
+    let query = `INSERT INTO ITEM (NAME,DESCRIPTION,PRICE,IMAGE,CATEGORY) VALUES ('${name}',
+    '${description}','${price}','${image}','${category}')`
+
+    db.run(query, (err)=> {
+        if(err)
+        {
+            console.log(err)
+            return res.status(401).send(err)
+        }
+        else
+        return res.status(200).send('You have successfully entered the details required!')
+    })
+})
+
+//Put request to add item to restaurant:
+
 
 //Server startup + Table run:
 server.listen(port,()=> {
