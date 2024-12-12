@@ -36,9 +36,9 @@ server.post('/user/register', (req,res)=> {
     const name = req.body.name
     const password = req.body.password
     const email = req.body.email
-    const admin = parseInt(req.body.admin,10)
+    const isAdmin = parseInt(req.body.admin,10)
     let query = `INSERT INTO USERS (NAME,EMAIL,PASSWORD,ADMIN) VALUES ('${name}','${email}',
-    '${password}',${admin})`
+    '${password}',${isAdmin})`
 
     db.run(query, (err)=> {
         if(err)
@@ -323,12 +323,60 @@ server.delete('/admin/delete/item/:ID', verifyToken, (req,res)=> {
     })
 })
 
-//POST Request for adding review
+//PUT Request for adding review
+server.put(`/restaurant/review`, (req,res)=> {
+    let name = req.query.name
+    let date = req.query.date
+    let query = `SELECT * FROM RESTAURANTS WHERE NAME='${name}' AND DATE='${date}'`
+    
+    db.get(query, (err,row)=> {
+        if(err)
+        {
+            console.log(err)
+            return res.send(err)
+        }
+        else
+        {
+            let restaurantID= row.ID
+            let userID = parseInt(req.body.userID,10)
+            let comment = req.body.comment
+            let rating = parseInt(req.body.rating,10)
+            let query2= `INSERT INTO REVIEWS (USER_ID, RESTAURANT_ID, COMMENT, RATING) VALUES (${userID},
+            ${restaurantID}, '${comment}', ${rating})`
+
+            db.run(query2, (err)=> {
+                if(err)
+                {
+                    console.log(err)
+                    return res.send(err)
+                }
+                else
+                {
+                    res.send(`Review for Restaurant: '${name}' has been added!`)  
+                }
+            })
+        }
+    })
+})
 
 
 //GET request to get the reviews
+server.get('/restaurant/all-reviews', (req,res)=> {
+    db.all('SELECT RATING,COMMENT,REPLY FROM REVIEWS', (err,row)=> {
+        if(err)
+        {
+            return res.status(401).send(err)
+        }
+        else if(!row)
+            return res.send('No reviews are available at the moment, please check again later.')
+        else
+        return res.status(200).json(row)
+    })
+})
 
-//PUT request for admin replying to review
+//GET request for a specific restaurant review
+
+//PUT request for admin replying to a review
 
 //DELETE request for deleting review
 

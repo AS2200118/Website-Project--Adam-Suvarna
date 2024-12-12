@@ -59,4 +59,4 @@ const ReviewTable = `CREATE TABLE IF NOT EXISTS REVIEWS(
     FOREIGN KEY (USER_ID) REFERENCES USERS(ID),
     FOREIGN KEY (RESTAURANT_ID) REFERENCES RESTAURANTS(ID))`;
 
-module.exports = {db, RestaurantsTable, UsersTable, ReservationTable, MenuTable, ReviewTable};
+module.exports = {db, RestaurantsTable, UsersTable, ReservationTable, MenuTable, ReviewTable, ItemTable};
