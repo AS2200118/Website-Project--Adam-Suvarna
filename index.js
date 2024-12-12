@@ -396,8 +396,66 @@ server.get('/review/:restaurant', (req,res)=> {
 })
 
 //PUT request for admin replying to a review
+server.put(`/admin/review-reply`, verifyToken, (req,res)=> {
+    console.log(req.userDetails)
+    const isAdmin = req.userDetails.isAdmin;
+    if(isAdmin!==1)
+        return res.status(403).send("Forbidden")
+    let userID = req.query.userID
+    let restaurantID = req.query.restaurantID
+    let reply = req.body.reply
+    let query = `SELECT * FROM REVIEWS WHERE USER_ID=${userID} AND RESTAURANT_ID=${restaurantID}`
+    
+    db.get(query, (err,row)=> {
+        if(err)
+        {
+            console.log(err)
+            return res.send(err)
+        }
+        else if(!row)
+        {
+            return res.send(`No reviews from User ID: ${userID} and Restaurant ID: ${restaurantID} exist.`)
+        }
+        else
+        {
+            let query2= `UPDATE REVIEWS SET REPLY='${reply}' WHERE USER_ID=${userID} AND 
+                         RESTAURANT_ID=${restaurantID}`
+            db.run(query2, (err)=> {
+                if(err)
+                {
+                    console.log(err)
+                    return res.send(err)
+                }
+                else
+                {
+                    res.send(`Review added from User ID: ${userID} and Restaurant ID: ${restaurantID} Successfully!`)  
+                }
+            })
+        }
+    })
+})
 
 //DELETE request for deleting review
+server.delete('/admin/delete/review/:ID', verifyToken, (req,res)=> {
+    console.log(req.userDetails)
+    const isAdmin = req.userDetails.isAdmin;
+    if(isAdmin!==1)
+        return res.status(403).send("Forbidden")
+    const userID = parseInt(req.params.userID,10)
+    const reviewID = parseInt(req.params.reviewID,10)
+    let query = `DELETE FROM REVIEWS WHERE USER_ID = ${userID} AND REVIEW_ID = ${reviewID}`
+
+    db.run(query, (err)=> {
+        if(err)
+        {
+            console.log(err)
+            return res.status(401).send(err)
+        }
+        else
+        return res.status(200).send(`Review with ID ${reviewID} from User ID: ${userID} 
+    has been successfully deleted!`)
+    })
+})
 
 //Server startup + Table run:
 server.listen(port,()=> {
