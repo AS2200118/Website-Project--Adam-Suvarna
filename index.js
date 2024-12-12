@@ -2,13 +2,17 @@
 const express = require('express')
 const cors = require('cors');
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt');
 const db_acc = require('./db.js')
 const db = db_acc.db
 const cookieParser = require('cookie-parser');
 const server = express()
 const port = 3000
 const secret_key = 'dnjendidj3ieadamdw48202diwjowosrrrlepoppadamkdiwjdwidadamkdjojo3eadamswdndjiadamdjdjkw'
-server.use(cors())
+server.use(cors({
+    origin:"http://localhost:3000",
+    credentials:true
+}))
 server.use(express.json())
 server.use(cookieParser())
 
@@ -58,24 +62,27 @@ server.post('/user/login', (req,res)=> {
     let query = `SELECT * FROM USERS WHERE EMAIL='${email}' AND PASSWORD='${password}'`
     
     db.get(query, (err,row)=> {
-        if(err)
-        {
-            console.log(err)
-            return res.status(401).send(err)
-        }
-        else if(!row)
-            return res.send('User does not exist, please register first.')
-        else
-        {
-            let userID = row.ID
-            let isAdmin = row.ISADMIN
-            const token = generateToken(userID,isAdmin)
-            res.cookie('authToken', token,{
-                sameSite:'strict',
-                expiresIn:'3h'
-            })
-        return res.status(200).send('Login Successfull!')
-        }
+        bcrypt.compare(password, row.PASSWORD, (err, isMatch) => {
+            if(err)
+                {
+                    console.log(err)
+                    return res.status(500).send(err)
+                }
+                else if(!isMatch)
+                    return res.status(401).send('Password is wrong, please try again.')
+                else
+                {
+                    let userID = row.ID
+                    let isAdmin = row.ISADMIN
+                    const token = generateToken(userID,isAdmin)
+                    res.cookie('authToken', token,{
+                        sameSite:'strict',
+                        secure:true,
+                        expiresIn:'3h'
+                    })
+                    return res.status(200).json({ id: userID, admin: isAdmin })
+                }
+        })
     })
 })
 
