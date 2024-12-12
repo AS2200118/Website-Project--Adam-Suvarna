@@ -375,6 +375,19 @@ server.get('/restaurant/all-reviews', (req,res)=> {
 })
 
 //GET request for a specific restaurant review
+server.get('/review/:restaurant', (req,res)=> {
+    db.get(`SELECT RATING,COMMENT,REPLY FROM REVIEWS WHERE RESTAURANT_ID=${req.params.restaurantID}`, (err,row)=> {
+        if(err)
+        {
+            console.log(err)
+            return res.status(401).send(err)
+        }
+        else if(!row)
+            return res.send(`Restaurant Does Not Exist`)
+        else
+        return res.status(200).json(row)
+    })
+})
 
 //PUT request for admin replying to a review
 
