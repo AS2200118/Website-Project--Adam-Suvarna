@@ -268,7 +268,11 @@ server.post('/admin/additem', verifyToken, (req,res)=> {
 })
 
 //Put request to add item to restaurant:
-server.put('/restaurant/additem', (req,err)=> {
+server.put('/admin/restaurant/additem', verifyToken, (req,err)=> {
+    console.log(req.userDetails)
+    const isAdmin = req.userDetails.isAdmin;
+    if(isAdmin!==1)
+        return res.status(403).send("Forbidden")
     let name = req.query.name
     let category = req.query.category
     let query = `SELECT * FROM ITEM WHERE NAME='${name}' AND CATEGORY='${category}'`
