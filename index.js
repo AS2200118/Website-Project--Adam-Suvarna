@@ -491,6 +491,10 @@ server.listen(port,()=> {
             if(err)
                 console.log("Error creating Menu Table" +err)
         });
+        db.run(db_acc.ItemTable, (err)=> {
+            if(err)
+                console.log("Error creating Item Table" +err)
+        });
         db.run(db_acc.ReviewTable, (err)=> {
             if(err)
                 console.log("Error creating Review Table" +err)
