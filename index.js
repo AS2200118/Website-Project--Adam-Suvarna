@@ -40,18 +40,24 @@ server.post('/user/register', (req,res)=> {
     const name = req.body.name
     const password = req.body.password
     const email = req.body.email
-    const isAdmin = parseInt(req.body.admin,10)
-    let query = `INSERT INTO USERS (NAME,EMAIL,PASSWORD,ADMIN) VALUES ('${name}','${email}',
-    '${password}',${isAdmin})`
 
-    db.run(query, (err)=> {
+    bcrypt.hash(password, 10, (err, hashedPassword) => {
         if(err)
         {
-            console.log(err)
-            return res.status(401).send(err)
+            return res.status(500).send('error hashing password')
         }
-        else
-        return res.status(200).send('You have successfully registered!')
+        let query = `INSERT INTO USERS (NAME,EMAIL,PASSWORD,ADMIN) VALUES ('${name}','${email}',
+        '${hashedPassword}',0)`
+    
+        db.run(query, (err)=> {
+            if(err)
+            {
+                console.log(err)
+                return res.status(401).send(err)
+            }
+            else
+            return res.status(200).send('You have successfully registered!')
+        })
     })
 })
 
@@ -78,6 +84,7 @@ server.post('/user/login', (req,res)=> {
                     res.cookie('authToken', token,{
                         sameSite:'strict',
                         secure:true,
+                        httpOnly:true,
                         expiresIn:'3h'
                     })
                     return res.status(200).json({ id: userID, admin: isAdmin })
