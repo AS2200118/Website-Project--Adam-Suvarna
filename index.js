@@ -48,7 +48,7 @@ server.post('/user/register', (req,res)=> {
         }
         let query = `INSERT INTO USERS (NAME,EMAIL,PASSWORD,ISADMIN) VALUES (?,?,?,?)`
     
-        db.run(query, [name,password,email,0], (err)=> {
+        db.run(query, [name,email,hashedPassword,0], (err)=> {
             if(err)
             {
                 console.log(err)
@@ -116,7 +116,7 @@ server.get('/admin/user/:name', verifyToken, (req,res)=> {
     const isAdmin = req.userDetails.isAdmin;
     if(isAdmin!==1)
         return res.status(403).send("Forbidden")
-    db.get(`SELECT NAME,EMAIL FROM USERS WHERE NAME='${req.params.name}'`, (err,row)=> {
+    db.get(`SELECT NAME,EMAIL FROM USERS WHERE NAME=?`, [req.params.name], (err,row)=> {
         if(err)
         {
             console.log(err)
@@ -136,9 +136,9 @@ server.delete('/admin/delete/user/:ID', verifyToken, (req,res)=> {
     if(isAdmin!==1)
         return res.status(403).send("Forbidden")
     const userid = parseInt(req.params.ID,10)
-    let query = `DELETE FROM USERS WHERE ID = ${userid}`
+    let query = `DELETE FROM USERS WHERE ID =?`
 
-    db.run(query, (err)=> {
+    db.run(query, [userid], (err)=> {
         if(err)
         {
             console.log(err)
@@ -161,10 +161,9 @@ server.post('/admin/restaurant', verifyToken, (req,res)=> {
     const date = req.body.date
     const time = req.body.time
     const categories = req.body.categories
-    let query = `INSERT INTO RESTAURANTS (NAME,LOCATION,AVAILABILITY,DATE,TIME,CATEGORIES) VALUES ('${name}',
-    '${location}','${availability}','${date}','${time}','${categories}')`
+    let query = `INSERT INTO RESTAURANTS (NAME,LOCATION,AVAILABILITY,DATE,TIME,CATEGORIES) VALUES (?,?,?,?,?,?)`
 
-    db.run(query, (err)=> {
+    db.run(query, [name,location,availability,date,time,categories], (err)=> {
         if(err)
         {
             console.log(err)
@@ -184,17 +183,17 @@ server.get('/restaurant/search', (req,res)=> {
     let availability = req.query.availability
     let query = `SELECT NAME,CATEGORIES,DATE,TIME,AVAILABILITY FROM RESTAURANTS WHERE ID>0`
     if(name)
-        query+=` AND NAME='${name}'`
+        query+=` AND NAME=?`
      if(categories)
-        query+=` AND CATEGORIES='${categories}'`
+        query+=` AND CATEGORIES=?`
      if(date)
-        query+=` AND DATE='${date}'`
+        query+=` AND DATE=?`
      if(time)
-        query+=` AND TIME='${time}'`
+        query+=` AND TIME=?`
      if(availability)
-        query+=` AND AVAILABILITY='${availability}'`
+        query+=` AND AVAILABILITY=?`
 
-    db.all(query, (err,row)=> {
+    db.all(query, [name,categories,date,time,availability], (err,row)=> {
         if(err)
         {
             console.log(err)
@@ -212,9 +211,9 @@ server.put(`/restaurant/reservation`, (req,res)=> {
     let name = req.query.name
     let date = req.query.date
     let time = req.query.time
-    let query = `SELECT * FROM RESTAURANTS WHERE NAME='${name}' AND DATE='${date}' AND TIME='${time}'`
+    let query = `SELECT * FROM RESTAURANTS WHERE NAME=? AND DATE=? AND TIME=?`
     
-    db.get(query, (err,row)=> {
+    db.get(query, [name,date,time], (err,row)=> {
         if(err)
         {
             console.log(err)
@@ -225,10 +224,9 @@ server.put(`/restaurant/reservation`, (req,res)=> {
             let restaurantID= row.ID
             let userID= parseInt(req.body.userID,10)
             let guests= req.body.guests
-            let query2= `INSERT INTO RESERVATIONS (USER_ID, RESTAURANT_ID, GUESTS) VALUES (${userID},
-            ${restaurantID}, '${guests}')`
+            let query2= `INSERT INTO RESERVATIONS (USER_ID, RESTAURANT_ID, GUESTS) VALUES (?,?,?)`
 
-            db.run(query2, (err)=> {
+            db.run(query2, [restaurantID,userID,guests], (err)=> {
                 if(err)
                 {
                     console.log(err)
