@@ -46,10 +46,9 @@ server.post('/user/register', (req,res)=> {
         {
             return res.status(500).send('error hashing password')
         }
-        let query = `INSERT INTO USERS (NAME,EMAIL,PASSWORD,ADMIN) VALUES ('${name}','${email}',
-        '${hashedPassword}',0)`
+        let query = `INSERT INTO USERS (NAME,EMAIL,PASSWORD,ISADMIN) VALUES (?,?,?,?)`
     
-        db.run(query, (err)=> {
+        db.run(query, [name,password,email,0], (err)=> {
             if(err)
             {
                 console.log(err)
@@ -65,9 +64,9 @@ server.post('/user/register', (req,res)=> {
 server.post('/user/login', (req,res)=> {
     const email = req.body.email
     const password = req.body.password
-    let query = `SELECT * FROM USERS WHERE EMAIL='${email}' AND PASSWORD='${password}'`
+    let query = `SELECT * FROM USERS WHERE EMAIL=? AND PASSWORD=?`
     
-    db.get(query, (err,row)=> {
+    db.get(query, [email,password], (err,row)=> {
         bcrypt.compare(password, row.PASSWORD, (err, isMatch) => {
             if(err)
                 {
