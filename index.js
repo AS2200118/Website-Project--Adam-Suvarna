@@ -319,8 +319,8 @@ server.put('/admin/restaurant/additem', /*verifyToken,*/ (req,res)=> {
 server.get('/restaurant/menu', (req, res) => {
     const restaurantID = req.query.restaurantID
     const query = `SELECT ITEM.NAME, ITEM.DESCRIPTION, ITEM.PRICE, ITEM.CATEGORY FROM MENU
-                   JOIN ITEM ON MENU.ITEM_ID = ITEM.ID JOIN RESTAURANT ON 
-                   MENU.RESTAURANT_ID = RESTAURANT.ID WHERE RESTAURANT.ID =${restaurantID}`
+                   JOIN ITEM ON MENU.ITEM_ID = ITEM.ID JOIN RESTAURANTS ON 
+                   MENU.RESTAURANT_ID = RESTAURANTS.ID WHERE RESTAURANTS.ID =${restaurantID}`
 
     db.all(query, (err, row) => {
         if (err)
