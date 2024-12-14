@@ -150,11 +150,11 @@ server.delete('/admin/delete/user/:ID', verifyToken, (req,res)=> {
 })
 
 //POST request for Restaurant:
-server.post('/admin/restaurant', /*verifyToken,*/ (req,res)=> {
-    /*console.log(req.userDetails)
+server.post('/admin/restaurant', verifyToken, (req,res)=> {
+    console.log(req.userDetails)
     const isAdmin = req.userDetails.isAdmin;
     if(isAdmin!==1)
-        return res.status(403).send("Forbidden")*/
+        return res.status(403).send("Forbidden")
     const name = req.body.name
     const location = req.body.location
     const availability = req.body.availability
@@ -183,17 +183,17 @@ server.get('/restaurant/search', (req,res)=> {
     let availability = req.query.availability
     let query = `SELECT NAME,CATEGORIES,DATE,TIME,AVAILABILITY FROM RESTAURANTS WHERE ID>0`
     if(name)
-        query+=` AND NAME=?`
+        query+=` AND NAME='${name}'`
      if(categories)
-        query+=` AND CATEGORIES=?`
+        query+=` AND CATEGORIES='${categories}'`
      if(date)
-        query+=` AND DATE=?`
+        query+=` AND DATE='${date}'`
      if(time)
-        query+=` AND TIME=?`
+        query+=` AND TIME='${time}'`
      if(availability)
-        query+=` AND AVAILABILITY=?`
+        query+=` AND AVAILABILITY='${availability}'`
 
-    db.all(query, [name,categories,date,time,availability], (err,row)=> {
+    db.all(query, (err,row)=> {
         if(err)
         {
             console.log(err)
@@ -254,11 +254,11 @@ server.put(`/restaurant/reservation`, (req,res)=> {
 })
 
 //POST request to add item:
-server.post('/admin/additem', (req,res)=> {
-    //console.log(req.userDetails)
-    //const isAdmin = req.userDetails.isAdmin;
-    //if(isAdmin!==1)
-        //return res.status(403).send("Forbidden")
+server.post('/admin/additem', verifyToken, (req,res)=> {
+    console.log(req.userDetails)
+    const isAdmin = req.userDetails.isAdmin;
+    if(isAdmin!==1)
+        return res.status(403).send("Forbidden")
     const name = req.body.name
     const description = req.body.description
     const price = req.body.price
@@ -278,11 +278,11 @@ server.post('/admin/additem', (req,res)=> {
 })
 
 //Put request to add item to restaurant:
-server.put('/admin/restaurant/additem', /*verifyToken,*/ (req,res)=> {
-    /*console.log(req.userDetails)
+server.put('/admin/restaurant/additem', verifyToken, (req,res)=> {
+    console.log(req.userDetails)
     const isAdmin = req.userDetails.isAdmin;
     if(isAdmin!==1)
-        return res.status(403).send("Forbidden")*/
+        return res.status(403).send("Forbidden")
     let name = req.query.name
     let category = req.query.category
     let query = `SELECT * FROM ITEM WHERE NAME='${name}' AND CATEGORY='${category}'`
