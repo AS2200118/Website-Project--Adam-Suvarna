@@ -7,7 +7,7 @@ const db_acc = require('./db.js')
 const db = db_acc.db
 const cookieParser = require('cookie-parser');
 const server = express()
-const port = 3000
+const port = 2000
 const secret_key = 'dnjendidj3ieadamdw48202diwjowosrrrlepoppadamkdiwjdwidadamkdjojo3eadamswdndjiadamdjdjkw'
 server.use(cors({
     origin:"http://localhost:3000",
@@ -150,11 +150,11 @@ server.delete('/admin/delete/user/:ID', verifyToken, (req,res)=> {
 })
 
 //POST request for Restaurant:
-server.post('/admin/restaurant', verifyToken, (req,res)=> {
-    console.log(req.userDetails)
+server.post('/admin/restaurant', /*verifyToken,*/ (req,res)=> {
+    /*console.log(req.userDetails)
     const isAdmin = req.userDetails.isAdmin;
     if(isAdmin!==1)
-        return res.status(403).send("Forbidden")
+        return res.status(403).send("Forbidden")*/
     const name = req.body.name
     const location = req.body.location
     const availability = req.body.availability
@@ -254,18 +254,17 @@ server.put(`/restaurant/reservation`, (req,res)=> {
 })
 
 //POST request to add item:
-server.post('/admin/additem', verifyToken, (req,res)=> {
-    console.log(req.userDetails)
-    const isAdmin = req.userDetails.isAdmin;
-    if(isAdmin!==1)
-        return res.status(403).send("Forbidden")
+server.post('/admin/additem', (req,res)=> {
+    //console.log(req.userDetails)
+    //const isAdmin = req.userDetails.isAdmin;
+    //if(isAdmin!==1)
+        //return res.status(403).send("Forbidden")
     const name = req.body.name
     const description = req.body.description
     const price = req.body.price
-    const image = req.body.image
     const category = req.body.category
-    let query = `INSERT INTO ITEM (NAME,DESCRIPTION,PRICE,IMAGE,CATEGORY) VALUES ('${name}',
-    '${description}','${price}','${image}','${category}')`
+    let query = `INSERT INTO ITEM (NAME,DESCRIPTION,PRICE,CATEGORY) VALUES ('${name}',
+    '${description}','${price}','${category}')`
 
     db.run(query, (err)=> {
         if(err)
@@ -279,11 +278,11 @@ server.post('/admin/additem', verifyToken, (req,res)=> {
 })
 
 //Put request to add item to restaurant:
-server.put('/admin/restaurant/additem', verifyToken, (req,err)=> {
-    console.log(req.userDetails)
+server.put('/admin/restaurant/additem', /*verifyToken,*/ (req,res)=> {
+    /*console.log(req.userDetails)
     const isAdmin = req.userDetails.isAdmin;
     if(isAdmin!==1)
-        return res.status(403).send("Forbidden")
+        return res.status(403).send("Forbidden")*/
     let name = req.query.name
     let category = req.query.category
     let query = `SELECT * FROM ITEM WHERE NAME='${name}' AND CATEGORY='${category}'`
@@ -309,7 +308,7 @@ server.put('/admin/restaurant/additem', verifyToken, (req,err)=> {
                 }
                 else
                 {
-                    res.send(`Item: '${item} added for Restaurant: '${restaurantID}' is Successfull!`)
+                    res.send(`Item: '${name} added for Restaurant: '${restaurantID}' is Successfull!`)
                 }
             })
         }
