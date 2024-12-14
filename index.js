@@ -315,6 +315,29 @@ server.put('/admin/restaurant/additem', /*verifyToken,*/ (req,res)=> {
     })
 })
 
+//GET request to get the menu items for a specific restaurant
+server.get('/restaurant/menu', (req, res) => {
+    const restaurantID = req.query.restaurantID
+    const query = `SELECT items.name, items.description, items.price, items.category FROM menu
+                   JOIN items ON menu.item_id = items.id JOIN restaurant ON 
+                   menu.restaurant_id = restaurant.id WHERE restaurant.id =${restaurantID}`
+
+    db.all(query, (err, row) => {
+        if (err)
+        {
+            return res.status(401).send(err)
+        } 
+        else if (!row) 
+        {
+            return res.send('No menu items found for this restaurant, please check again later.')
+        } 
+        else 
+        {
+            return res.status(200).json(row)
+        }
+    })
+})
+
 //DELETE request to delete an item from menu
 server.delete('/admin/delete/item/:ID', verifyToken, (req,res)=> {
     console.log(req.userDetails)
